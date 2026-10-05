@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIGET // MANTENIMIENTO INTEGRAL DE HARDWARE - MIDIS</title>
+    <title>SIGET // Mantenimiento Integral de Hardware - MIDIS</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -216,10 +216,14 @@
         .btn-red { background: var(--primary); color: white; }
         .btn:hover { opacity: 0.9; }
 
+        /* ============================================================
+           WORKSPACE: DIVISIÓN EN 2 SECCIONES DE IGUAL TAMAÑO
+           ============================================================ */
         .workspace-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 25px;
+            align-items: stretch;   /* Ambas cards con misma altura */
         }
 
         @media (max-width: 1200px) {
@@ -235,6 +239,32 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            height: 100%;            /* Igual altura entre ambas */
+        }
+
+        /* ============================================================
+           LOGO INSTITUCIONAL VISIBLE EN WEB Y EN A4
+           ============================================================ */
+        .logo-container {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-bottom: 15px;      /* Espacio en web */
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo-container img {
+            height: 55px;
+            object-fit: contain;
+        }
+
+        /* Si no hay imagen, mostramos un placeholder de texto */
+        .logo-fallback {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--title-color);
+            letter-spacing: 1px;
         }
 
         .card-header-title {
@@ -255,10 +285,6 @@
             font-size: 0.7rem;
             color: var(--text-muted);
             margin-top: 4px;
-        }
-
-        .print-logo-container {
-            display: none;
         }
 
         .form-row {
@@ -369,6 +395,7 @@
             font-size: 0.75rem;
         }
 
+        /* --- APARTADO DE FIRMAS EDITABLES --- */
         .signatures-section {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -410,11 +437,18 @@
             background: var(--input-bg);
         }
 
+        /* ============================================================
+           VISTA PREVIA / IMPRESIÓN A4
+           - 2 cm en blanco arriba del logo
+           - 2 cm en blanco arriba de las firmas
+           - Logo visible en ambas secciones
+           ============================================================ */
         @media print {
             @page {
                 size: A4 portrait;
-                margin: 10mm;
+                margin: 0;             /* Controlamos márgenes internamente */
             }
+
             body {
                 background: white !important;
                 color: black !important;
@@ -422,34 +456,49 @@
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
+
             header, .filters-grid, .toolbar, .theme-toggle, .sync-banner {
                 display: none !important;
             }
+
             .workspace-grid {
                 display: block !important;
             }
+
             .card {
                 border: 1px solid #d1d5db !important;
                 box-shadow: none !important;
-                padding: 15px !important;
                 background: white !important;
                 color: black !important;
                 page-break-after: always !important;
                 break-after: page !important;
                 height: 100vh;
+                min-height: 297mm;       /* Alto A4 */
+                padding: 15mm 12mm !important;
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
+                margin: 0 !important;
+                border-radius: 0 !important;
             }
-            .print-logo-container {
-                display: block !important;
-                text-align: left;
-                margin-bottom: 2cm; /* Exactamente 2cm de separación debajo del logo */
+
+            /* -------- ESPACIO EN BLANCO DE 2 cm ARRIBA DEL LOGO -------- */
+            .logo-container {
+                display: flex !important;
+                margin-top: 2cm !important;         /* 2 cm arriba del logo */
+                margin-bottom: 1cm !important;
+                padding-bottom: 10px !important;
+                border-bottom: 1px solid #cbd5e1 !important;
             }
-            .print-logo-container img {
-                height: 48px;
+            .logo-container img {
+                height: 60px !important;
                 object-fit: contain;
             }
+            .logo-fallback {
+                color: #0284c7 !important;
+                font-size: 1.2rem !important;
+            }
+
             .card-header-title h3 {
                 color: #111827 !important;
                 font-size: 0.95rem !important;
@@ -459,18 +508,28 @@
                 margin-bottom: 15px !important;
                 padding-bottom: 8px !important;
             }
+
             .form-row label { color: #374151 !important; }
             .editable-input, textarea, .signature-input {
                 border: 1px solid #cbd5e1 !important;
                 background: #f8fafc !important;
                 color: #0f172a !important;
             }
+
             th { background: #e2e8f0 !important; color: #0f172a !important; border-bottom: 2px solid #64748b !important; }
             td { color: #1e293b !important; border-bottom: 1px solid #e2e8f0 !important; }
+
+            /* -------- ESPACIO EN BLANCO DE 2 cm ARRIBA DE LAS FIRMAS -------- */
             .signatures-section {
                 border-top: 1px solid #9ca3af !important;
+                margin-top: 2cm !important;         /* 2 cm arriba de las firmas */
+                padding-top: 20px !important;
             }
-            @page { margin-bottom: 0; margin-top: 0; }
+
+            .card:last-child {
+                page-break-after: auto !important;
+                break-after: auto !important;
+            }
         }
     </style>
 </head>
@@ -494,11 +553,11 @@
         <button class="btn-sync" onclick="cargarDatos()"><i class="fa-solid fa-rotate"></i> Sincronizar</button>
     </div>
 
-    <!-- Filtros jerárquicos -->
+    <!-- Filtros jerárquicos en cascada -->
     <div class="filters-grid">
-        <div class="filter-group"><label>1. Sede:</label><select id="filtroSede" onchange="filtrarDatos()"><option value="">TODAS LAS SEDES</option></select></div>
-        <div class="filter-group"><label>2. Gerencia:</label><select id="filtroGerencia" onchange="filtrarDatos()"><option value="">TODAS LAS GERENCIAS</option></select></div>
-        <div class="filter-group"><label>3. Área:</label><select id="filtroArea" onchange="filtrarDatos()"><option value="">TODAS LAS ÁREAS</option></select></div>
+        <div class="filter-group"><label>1. Sede:</label><select id="filtroSede" onchange="onFiltroSedeChange()"><option value="">TODAS LAS SEDES</option></select></div>
+        <div class="filter-group"><label>2. Gerencia:</label><select id="filtroGerencia" onchange="onFiltroGerenciaChange()"><option value="">TODAS LAS GERENCIAS</option></select></div>
+        <div class="filter-group"><label>3. Área:</label><select id="filtroArea" onchange="onFiltroAreaChange()"><option value="">TODAS LAS ÁREAS</option></select></div>
         <div class="filter-group"><label>4. Sub Área:</label><select id="filtroSubArea" onchange="filtrarDatos()"><option value="">TODAS LAS SUB ÁREAS</option></select></div>
     </div>
 
@@ -508,7 +567,7 @@
             <button class="btn btn-green" onclick="agregarFila()"><i class="fa-solid fa-plus"></i> Agregar Fila</button>
             <button class="btn btn-blue" onclick="ordenarAZ()"><i class="fa-solid fa-arrow-down-a-z"></i> Ordenar A-Z (Usuario)</button>
             <button class="btn btn-orange" onclick="limpiarFiltros()"><i class="fa-solid fa-eraser"></i> Limpiar Filtros</button>
-            <button class="btn btn-dark" onclick="restaurarDatos()"><i class="fa-solid fa-rotate-left"></i> Restaurar</button>
+            <button class="btn btn-dark" onclick="limpiarTodo()"><i class="fa-solid fa-broom"></i> Limpiar</button>
             <button class="btn btn-dark" id="btnAsignaciones">0 Asignaciones</button>
         </div>
         <div class="toolbar-right">
@@ -516,16 +575,18 @@
         </div>
     </div>
 
-    <!-- Contenedor Principal -->
+    <!-- Contenedor Principal: 2 secciones iguales -->
     <div class="workspace-grid">
         
         <!-- Ficha Técnica -->
         <div class="card">
             <div>
-                <!-- LOGO INSTITUCIONAL EMBEBIDO CON 2CM DE SEPARACIÓN EN A4 -->
-                <div class="print-logo-container">
-                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" alt="Logo MIDIS" id="midisLogo">
+                <!-- LOGO INSTITUCIONAL VISIBLE EN WEB Y A4 -->
+                <div class="logo-container">
+                    <img src="logo.png" alt="Logo MIDIS" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <span class="logo-fallback" style="display:none;">MIDIS - OGTI</span>
                 </div>
+
                 <div class="card-header-title">
                     <h3>FICHA TÉCNICA DE MANTENIMIENTO DE EQUIPOS DE CÓMPUTO</h3>
                     <p>OFICINA GENERAL DE ADMINISTRACIÓN - OFICINA GENERAL DE TECNOLOGÍAS DE LA INFORMACIÓN</p>
@@ -547,7 +608,7 @@
                 <div style="margin-top: 10px;"><label style="font-size: 0.75rem; font-weight: 700; color: var(--title-color); text-transform: uppercase;">Observaciones:</label><textarea rows="3" id="txtObservaciones">Se procedió con el mantenimiento preventivo programado según el cronograma institucional. Los equipos evaluados quedan totalmente operativos y conformes para sus funciones asignadas.</textarea></div>
             </div>
 
-            <!-- APARTADO DE FIRMAS EDITABLES -->
+            <!-- FIRMAS -->
             <div class="signatures-section">
                 <div class="signature-box">
                     <div class="signature-line"></div>
@@ -565,10 +626,12 @@
         <!-- Anexo / Tabla Consolidada -->
         <div class="card">
             <div>
-                <!-- LOGO INSTITUCIONAL EMBEBIDO CON 2CM DE SEPARACIÓN EN A4 -->
-                <div class="print-logo-container">
-                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" alt="Logo MIDIS" class="midisLogoCopy">
+                <!-- LOGO INSTITUCIONAL VISIBLE EN WEB Y A4 -->
+                <div class="logo-container">
+                    <img src="logo.png" alt="Logo MIDIS" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <span class="logo-fallback" style="display:none;">MIDIS - OGTI</span>
                 </div>
+
                 <div class="card-header-title">
                     <h3>ANEXO - MANTENIMIENTO INTEGRAL DE EQUIPOS</h3>
                     <p>Consolidado general de CPU, Monitores y Teclados por Usuario</p>
@@ -597,7 +660,7 @@
                 </div>
             </div>
 
-            <!-- APARTADO DE FIRMAS EDITABLES -->
+            <!-- FIRMAS -->
             <div class="signatures-section">
                 <div class="signature-box">
                     <div class="signature-line"></div>
@@ -615,28 +678,14 @@
     </div>
 
     <script>
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxICtJMaREBnZ11RU47JqJlRDj7j4NIkFiPGHqtLpUnnSZbpTzevp-3jOuZGkRAUZ0C/exec";
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYWgwggjL3_CsGiD9giQjiCciMSLgWjLvJ-uIg5WgAv4X0gi7wm61jhWNXCL2sB3Yr/exec";
 
         let dbGlobal = { cpu: [], monitores: [], teclados: [] };
         let datosFiltrados = [];
 
-        // Convertir automáticamente la imagen logo.png local a Base64 al cargar la página
-        window.addEventListener('DOMContentLoaded', () => {
-            const img = new Image();
-            img.crossOrigin = 'Anonymous';
-            img.onload = function() {
-                const canvas = document.createElement('canvas');
-                canvas.width = img.width;
-                canvas.height = img.height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0);
-                const dataURL = canvas.toDataURL('image/png');
-                document.getElementById('midisLogo').src = dataURL;
-                document.querySelectorAll('.midisLogoCopy').forEach(el => el.src = dataURL);
-            };
-            img.src = 'logo.png';
-        });
-
+        /* ============================================================
+           TEMA CLARO / OSCURO
+           ============================================================ */
         function toggleTheme() {
             const html = document.documentElement;
             const icon = document.getElementById('themeIcon');
@@ -649,68 +698,159 @@
             }
         }
 
+        /* ============================================================
+           CARGA DE DATOS DESDE GOOGLE SHEETS
+           ============================================================ */
         async function cargarDatos() {
             document.getElementById('syncText').innerText = "Cargando datos desde Google Sheets...";
             try {
                 const response = await fetch(APPS_SCRIPT_URL);
                 dbGlobal = await response.json();
 
-                let totalRegistros = (dbGlobal.cpu ? dbGlobal.cpu.length : 0) + 
-                                     (dbGlobal.monitores ? dbGlobal.monitores.length : 0) + 
-                                     (dbGlobal.teclados ? dbGlobal.teclados.length : 0);
+                const totalCPU = dbGlobal.cpu ? dbGlobal.cpu.length : 0;
+                const totalMon = dbGlobal.monitores ? dbGlobal.monitores.length : 0;
+                const totalTec = dbGlobal.teclados ? dbGlobal.teclados.length : 0;
 
-                document.getElementById('badgeTotal').innerText = `${totalRegistros} EQUIPOS TOTALES`;
-                document.getElementById('syncText').innerText = `Sincronización Exitosa: ${dbGlobal.cpu.length} CPUs, ${dbGlobal.monitores.length} Monitores, ${dbGlobal.teclados.length} Teclados`;
-                
-                poblarSelectoresFiltro();
+                document.getElementById('badgeTotal').innerText = `${totalCPU + totalMon + totalTec} EQUIPOS TOTALES`;
+                document.getElementById('syncText').innerText = `Sincronización Exitosa: ${totalCPU} CPUs, ${totalMon} Monitores, ${totalTec} Teclados`;
+
+                // Inicializar filtros en cascada
+                inicializarFiltrosCascada();
                 filtrarDatos();
+
             } catch (error) {
                 console.error("Error:", error);
                 document.getElementById('syncText').innerText = "Error de conexión o CORS al consultar Google Sheets.";
             }
         }
 
-        function poblarSelectoresFiltro() {
-            let sedes = new Set(), gerencias = new Set(), areas = new Set(), subareas = new Set();
-            if (dbGlobal.cpu) {
-                dbGlobal.cpu.forEach(item => {
-                    if(item.SEDE) sedes.add(item.SEDE);
-                    if(item.GERENCIA) gerencias.add(item.GERENCIA);
-                    if(item.AREA) areas.add(item.AREA);
-                    if(item.SUBAREA) subareas.add(item.SUBAREA);
-                });
-            }
+        /* ============================================================
+           FILTROS EN CASCADA
+           - Sede → filtra Gerencias
+           - Gerencia → filtra Áreas
+           - Área → filtra Sub Áreas
+           ============================================================ */
+        function inicializarFiltrosCascada() {
+            // Llenar Sede con todos los valores únicos
+            const sedes = obtenerUnicos(dbGlobal.cpu, 'SEDE');
             llenarSelect('filtroSede', sedes);
-            llenarSelect('filtroGerencia', gerencias);
-            llenarSelect('filtroArea', areas);
-            llenarSelect('filtroSubArea', subareas);
+
+            // Limpiar los demás
+            llenarSelect('filtroGerencia', []);
+            llenarSelect('filtroArea', []);
+            llenarSelect('filtroSubArea', []);
         }
 
-        function llenarSelect(elementId, setValues) {
-            let select = document.getElementById(elementId);
-            let valorActual = select.value;
-            select.innerHTML = `<option value="">TODOS</option>`;
-            Array.from(setValues).sort().forEach(val => {
-                let opt = document.createElement('option');
+        function onFiltroSedeChange() {
+            const sede = document.getElementById('filtroSede').value;
+
+            // Filtrar datos por sede para armar gerencias
+            const base = sede
+                ? dbGlobal.cpu.filter(c => String(c.SEDE) === sede)
+                : dbGlobal.cpu;
+
+            const gerencias = obtenerUnicos(base, 'GERENCIA');
+            llenarSelect('filtroGerencia', gerencias);
+
+            // Resetear niveles inferiores
+            llenarSelect('filtroArea', []);
+            llenarSelect('filtroSubArea', []);
+
+            filtrarDatos();
+        }
+
+        function onFiltroGerenciaChange() {
+            const sede = document.getElementById('filtroSede').value;
+            const gerencia = document.getElementById('filtroGerencia').value;
+
+            const base = dbGlobal.cpu.filter(c => {
+                if (sede && String(c.SEDE) !== sede) return false;
+                if (gerencia && String(c.GERENCIA) !== gerencia) return false;
+                return true;
+            });
+
+            const areas = obtenerUnicos(base, 'AREA');
+            llenarSelect('filtroArea', areas);
+
+            // Resetear nivel inferior
+            llenarSelect('filtroSubArea', []);
+
+            filtrarDatos();
+        }
+
+        function onFiltroAreaChange() {
+            const sede = document.getElementById('filtroSede').value;
+            const gerencia = document.getElementById('filtroGerencia').value;
+            const area = document.getElementById('filtroArea').value;
+
+            const base = dbGlobal.cpu.filter(c => {
+                if (sede && String(c.SEDE) !== sede) return false;
+                if (gerencia && String(c.GERENCIA) !== gerencia) return false;
+                if (area && String(c.AREA) !== area) return false;
+                return true;
+            });
+
+            const subareas = obtenerUnicos(base, 'SUBAREA');
+            llenarSelect('filtroSubArea', subareas);
+
+            filtrarDatos();
+        }
+
+        /* ============================================================
+           FUNCIONES AUXILIARES DE FILTRADO
+           ============================================================ */
+        function obtenerUnicos(arr, campo) {
+            if (!arr) return [];
+            const set = new Set();
+            arr.forEach(item => {
+                const val = item[campo];
+                if (val !== undefined && val !== null && String(val).trim() !== "") {
+                    set.add(String(val).trim());
+                }
+            });
+            return Array.from(set).sort((a, b) => a.localeCompare(b));
+        }
+
+        function llenarSelect(elementId, valores) {
+            const select = document.getElementById(elementId);
+            const valorActual = select.value;
+
+            // Mantener la primera opción "TODOS"
+            const primeraOpcion = select.options[0];
+            select.innerHTML = "";
+            select.appendChild(primeraOpcion);
+
+            valores.forEach(val => {
+                const opt = document.createElement('option');
                 opt.value = val;
                 opt.textContent = val;
                 select.appendChild(opt);
             });
-            select.value = valorActual;
+
+            // Restaurar valor si aún existe
+            if (valores.includes(valorActual)) {
+                select.value = valorActual;
+            } else {
+                select.value = "";
+            }
         }
 
+        /* ============================================================
+           FILTRADO PRINCIPAL (usa los 4 filtros en conjunto)
+           ============================================================ */
         function filtrarDatos() {
-            let sede = document.getElementById('filtroSede').value;
-            let gerencia = document.getElementById('filtroGerencia').value;
-            let area = document.getElementById('filtroArea').value;
-            let subarea = document.getElementById('filtroSubArea').value;
+            const sede     = document.getElementById('filtroSede').value;
+            const gerencia = document.getElementById('filtroGerencia').value;
+            const area     = document.getElementById('filtroArea').value;
+            const subarea  = document.getElementById('filtroSubArea').value;
 
-            let cpuList = dbGlobal.cpu || [];
+            const cpuList = dbGlobal.cpu || [];
+
             datosFiltrados = cpuList.filter(cpu => {
-                if (sede && String(cpu.SEDE) !== sede) return false;
-                if (gerencia && String(cpu.GERENCIA) !== gerencia) return false;
-                if (area && String(cpu.AREA) !== area) return false;
-                if (subarea && String(cpu.SUBAREA) !== subarea) return false;
+                if (sede     && String(cpu.SEDE || "").trim()     !== sede)     return false;
+                if (gerencia && String(cpu.GERENCIA || "").trim() !== gerencia) return false;
+                if (area     && String(cpu.AREA || "").trim()     !== area)     return false;
+                if (subarea  && String(cpu.SUBAREA || "").trim()  !== subarea)  return false;
                 return true;
             });
 
@@ -718,8 +858,11 @@
             actualizarFichaTecnica(datosFiltrados[0]);
         }
 
+        /* ============================================================
+           RENDERIZADO DE TABLA
+           ============================================================ */
         function renderizarTabla() {
-            let tbody = document.getElementById('tablaCuerpo');
+            const tbody = document.getElementById('tablaCuerpo');
             tbody.innerHTML = "";
 
             if (datosFiltrados.length === 0) {
@@ -731,11 +874,15 @@
             document.getElementById('btnAsignaciones').innerText = `${datosFiltrados.length} Asignaciones`;
 
             datosFiltrados.forEach((cpu, index) => {
-                let responsable = cpu["USUARIO RESPONSABLE"] || "-";
-                let monitor = (dbGlobal.monitores || []).find(m => String(m["USUARIO RESPONSABLE"]).trim() === String(responsable).trim()) || {};
-                let teclado = (dbGlobal.teclados || []).find(t => String(t["USUARIO RESPONSABLE"]).trim() === String(responsable).trim()) || {};
+                const responsable = cpu["USUARIO RESPONSABLE"] || "-";
+                const monitor = (dbGlobal.monitores || []).find(m =>
+                    String(m["USUARIO RESPONSABLE"] || "").trim() === String(responsable).trim()
+                ) || {};
+                const teclado = (dbGlobal.teclados || []).find(t =>
+                    String(t["USUARIO RESPONSABLE"] || "").trim() === String(responsable).trim()
+                ) || {};
 
-                let tr = document.createElement('tr');
+                const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${index + 1}</td>
                     <td style="font-weight: 600;">${responsable}</td>
@@ -773,25 +920,37 @@
             document.getElementById('inputResponsable').value = cpu["USUARIO RESPONSABLE"] || "-";
         }
 
+        /* ============================================================
+           ACCIONES DE BOTONES
+           ============================================================ */
         function limpiarFiltros() {
             document.getElementById('filtroSede').value = "";
             document.getElementById('filtroGerencia').value = "";
             document.getElementById('filtroArea').value = "";
             document.getElementById('filtroSubArea').value = "";
+
+            // Reinicializar cascada
+            inicializarFiltrosCascada();
             filtrarDatos();
         }
 
         function ordenarAZ() {
             datosFiltrados.sort((a, b) => {
-                let u1 = (a["USUARIO RESPONSABLE"] || "").toUpperCase();
-                let u2 = (b["USUARIO RESPONSABLE"] || "").toUpperCase();
+                const u1 = (a["USUARIO RESPONSABLE"] || "").toUpperCase();
+                const u2 = (b["USUARIO RESPONSABLE"] || "").toUpperCase();
                 return u1.localeCompare(u2);
             });
             renderizarTabla();
         }
 
-        function agregarFila() { alert("Formulario habilitado para registrar nuevo mantenimiento de equipo."); }
-        function restaurarDatos() { limpiarFiltros(); cargarDatos(); }
+        function agregarFila() {
+            alert("Formulario habilitado para registrar nuevo mantenimiento de equipo.");
+        }
+
+        // Botón "LIMPIAR" (antes "RESTAURAR")
+        function limpiarTodo() {
+            limpiarFiltros();
+        }
 
         window.onload = cargarDatos;
     </script>

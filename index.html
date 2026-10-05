@@ -67,6 +67,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .header-title h1 {
@@ -129,6 +131,14 @@
             margin-bottom: 20px;
             font-size: 0.9rem;
             font-weight: 500;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .sync-banner.error {
+            background: rgba(220, 38, 38, 0.1);
+            border-color: var(--primary);
+            color: var(--primary);
         }
 
         .btn-sync {
@@ -217,17 +227,12 @@
         .btn:hover { opacity: 0.9; }
 
         /* ============================================================
-           WORKSPACE: DIVISIÓN EN 2 SECCIONES DE IGUAL TAMAÑO
+           WORKSPACE: UNA SOLA COLUMNA (FICHA ARRIBA, ANEXO ABAJO)
            ============================================================ */
         .workspace-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr;
             gap: 25px;
-            align-items: stretch;   /* Ambas cards con misma altura */
-        }
-
-        @media (max-width: 1200px) {
-            .workspace-grid { grid-template-columns: 1fr; }
         }
 
         .card {
@@ -239,7 +244,6 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            height: 100%;            /* Igual altura entre ambas */
         }
 
         /* ============================================================
@@ -249,9 +253,10 @@
             display: flex;
             justify-content: flex-start;
             align-items: center;
-            margin-bottom: 15px;      /* Espacio en web */
+            margin-bottom: 15px;
             padding-bottom: 10px;
             border-bottom: 1px solid var(--border-color);
+            min-height: 60px;
         }
 
         .logo-container img {
@@ -259,7 +264,6 @@
             object-fit: contain;
         }
 
-        /* Si no hay imagen, mostramos un placeholder de texto */
         .logo-fallback {
             font-size: 1.1rem;
             font-weight: 700;
@@ -350,20 +354,20 @@
 
         .table-responsive {
             overflow-x: auto;
-            max-height: 440px;
+            max-height: 520px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.75rem;
+            font-size: 0.78rem;
             text-align: left;
         }
 
         th {
             background: var(--table-header);
             color: var(--text-main);
-            padding: 8px 6px;
+            padding: 10px 8px;
             border-bottom: 1px solid var(--border-color);
             font-weight: 600;
             white-space: nowrap;
@@ -373,7 +377,7 @@
         }
 
         td {
-            padding: 8px 6px;
+            padding: 9px 8px;
             border-bottom: 1px solid var(--border-color);
             color: var(--text-main);
             white-space: nowrap;
@@ -385,8 +389,8 @@
             background: var(--primary);
             color: white;
             border: none;
-            width: 24px;
-            height: 24px;
+            width: 26px;
+            height: 26px;
             border-radius: 4px;
             cursor: pointer;
             display: inline-flex;
@@ -439,14 +443,11 @@
 
         /* ============================================================
            VISTA PREVIA / IMPRESIÓN A4
-           - 2 cm en blanco arriba del logo
-           - 2 cm en blanco arriba de las firmas
-           - Logo visible en ambas secciones
            ============================================================ */
         @media print {
             @page {
                 size: A4 portrait;
-                margin: 0;             /* Controlamos márgenes internamente */
+                margin: 0;
             }
 
             body {
@@ -466,14 +467,14 @@
             }
 
             .card {
-                border: 1px solid #d1d5db !important;
+                border: none !important;
                 box-shadow: none !important;
                 background: white !important;
                 color: black !important;
                 page-break-after: always !important;
                 break-after: page !important;
                 height: 100vh;
-                min-height: 297mm;       /* Alto A4 */
+                min-height: 297mm;
                 padding: 15mm 12mm !important;
                 display: flex;
                 flex-direction: column;
@@ -482,13 +483,14 @@
                 border-radius: 0 !important;
             }
 
-            /* -------- ESPACIO EN BLANCO DE 2 cm ARRIBA DEL LOGO -------- */
+            /* Espacio en blanco de 2 cm arriba del logo */
             .logo-container {
                 display: flex !important;
-                margin-top: 2cm !important;         /* 2 cm arriba del logo */
+                margin-top: 2cm !important;
                 margin-bottom: 1cm !important;
                 padding-bottom: 10px !important;
                 border-bottom: 1px solid #cbd5e1 !important;
+                min-height: auto !important;
             }
             .logo-container img {
                 height: 60px !important;
@@ -519,10 +521,10 @@
             th { background: #e2e8f0 !important; color: #0f172a !important; border-bottom: 2px solid #64748b !important; }
             td { color: #1e293b !important; border-bottom: 1px solid #e2e8f0 !important; }
 
-            /* -------- ESPACIO EN BLANCO DE 2 cm ARRIBA DE LAS FIRMAS -------- */
+            /* Espacio en blanco de 2 cm arriba de las firmas */
             .signatures-section {
                 border-top: 1px solid #9ca3af !important;
-                margin-top: 2cm !important;         /* 2 cm arriba de las firmas */
+                margin-top: 2cm !important;
                 padding-top: 20px !important;
             }
 
@@ -549,7 +551,7 @@
     </header>
 
     <div class="sync-banner" id="syncBanner">
-        <span><i class="fa-solid fa-circle-check"></i> <span id="syncText">Sincronizando con Google Sheets...</span></span>
+        <span><i class="fa-solid fa-circle-check" id="syncIcon"></i> <span id="syncText">Sincronizando con Google Sheets...</span></span>
         <button class="btn-sync" onclick="cargarDatos()"><i class="fa-solid fa-rotate"></i> Sincronizar</button>
     </div>
 
@@ -575,13 +577,14 @@
         </div>
     </div>
 
-    <!-- Contenedor Principal: 2 secciones iguales -->
+    <!-- ============================================================
+         CONTENEDOR PRINCIPAL: FICHA ARRIBA, ANEXO ABAJO
+         ============================================================ -->
     <div class="workspace-grid">
         
-        <!-- Ficha Técnica -->
+        <!-- ==================== SECCIÓN 1: FICHA TÉCNICA ==================== -->
         <div class="card">
             <div>
-                <!-- LOGO INSTITUCIONAL VISIBLE EN WEB Y A4 -->
                 <div class="logo-container">
                     <img src="logo.png" alt="Logo MIDIS" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                     <span class="logo-fallback" style="display:none;">MIDIS - OGTI</span>
@@ -608,7 +611,6 @@
                 <div style="margin-top: 10px;"><label style="font-size: 0.75rem; font-weight: 700; color: var(--title-color); text-transform: uppercase;">Observaciones:</label><textarea rows="3" id="txtObservaciones">Se procedió con el mantenimiento preventivo programado según el cronograma institucional. Los equipos evaluados quedan totalmente operativos y conformes para sus funciones asignadas.</textarea></div>
             </div>
 
-            <!-- FIRMAS -->
             <div class="signatures-section">
                 <div class="signature-box">
                     <div class="signature-line"></div>
@@ -623,10 +625,9 @@
             </div>
         </div>
 
-        <!-- Anexo / Tabla Consolidada -->
+        <!-- ==================== SECCIÓN 2: ANEXO ==================== -->
         <div class="card">
             <div>
-                <!-- LOGO INSTITUCIONAL VISIBLE EN WEB Y A4 -->
                 <div class="logo-container">
                     <img src="logo.png" alt="Logo MIDIS" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                     <span class="logo-fallback" style="display:none;">MIDIS - OGTI</span>
@@ -660,7 +661,6 @@
                 </div>
             </div>
 
-            <!-- FIRMAS -->
             <div class="signatures-section">
                 <div class="signature-box">
                     <div class="signature-line"></div>
@@ -678,6 +678,10 @@
     </div>
 
     <script>
+        /* ============================================================
+           URL DEL WEB APP DE GOOGLE APPS SCRIPT
+           ⚠️ Reemplázala por la tuya después de implementar
+           ============================================================ */
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYWgwggjL3_CsGiD9giQjiCciMSLgWjLvJ-uIg5WgAv4X0gi7wm61jhWNXCL2sB3Yr/exec";
 
         let dbGlobal = { cpu: [], monitores: [], teclados: [] };
@@ -699,43 +703,91 @@
         }
 
         /* ============================================================
-           CARGA DE DATOS DESDE GOOGLE SHEETS
+           SINCRONIZACIÓN CON GOOGLE SHEETS - VERSIÓN ROBUSTA
            ============================================================ */
         async function cargarDatos() {
-            document.getElementById('syncText').innerText = "Cargando datos desde Google Sheets...";
-            try {
-                const response = await fetch(APPS_SCRIPT_URL);
-                dbGlobal = await response.json();
+            const syncBanner = document.getElementById('syncBanner');
+            const syncText = document.getElementById('syncText');
+            const syncIcon = document.getElementById('syncIcon');
 
-                const totalCPU = dbGlobal.cpu ? dbGlobal.cpu.length : 0;
-                const totalMon = dbGlobal.monitores ? dbGlobal.monitores.length : 0;
-                const totalTec = dbGlobal.teclados ? dbGlobal.teclados.length : 0;
+            syncBanner.classList.remove('error');
+            syncIcon.className = 'fa-solid fa-spinner fa-spin';
+            syncText.innerText = "Cargando datos desde Google Sheets...";
+
+            try {
+                // fetch con opciones robustas para Google Apps Script
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'GET',
+                    redirect: 'follow',
+                    headers: {
+                        'Accept': 'application/json'
+                    },
+                    cache: 'no-cache'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status} - ${response.statusText}`);
+                }
+
+                const texto = await response.text();
+
+                // Validar que la respuesta no esté vacía
+                if (!texto || texto.trim() === "") {
+                    throw new Error("Respuesta vacía del servidor");
+                }
+
+                // Intentar parsear el JSON
+                let data;
+                try {
+                    data = JSON.parse(texto);
+                } catch (e) {
+                    console.error("Respuesta recibida:", texto.substring(0, 300));
+                    throw new Error("La respuesta no es JSON válido. Revisa la implementación del Apps Script.");
+                }
+
+                // Validar estructura esperada
+                if (data.error) {
+                    throw new Error(data.mensaje || "Error reportado por el servidor");
+                }
+
+                // Normalizar por si el Apps Script no devolvió alguna clave
+                dbGlobal = {
+                    cpu:       Array.isArray(data.cpu)       ? data.cpu       : [],
+                    monitores: Array.isArray(data.monitores) ? data.monitores : [],
+                    teclados:  Array.isArray(data.teclados)  ? data.teclados  : []
+                };
+
+                const totalCPU = dbGlobal.cpu.length;
+                const totalMon = dbGlobal.monitores.length;
+                const totalTec = dbGlobal.teclados.length;
 
                 document.getElementById('badgeTotal').innerText = `${totalCPU + totalMon + totalTec} EQUIPOS TOTALES`;
-                document.getElementById('syncText').innerText = `Sincronización Exitosa: ${totalCPU} CPUs, ${totalMon} Monitores, ${totalTec} Teclados`;
+                syncIcon.className = 'fa-solid fa-circle-check';
+                syncText.innerText = `Sincronización Exitosa: ${totalCPU} CPUs, ${totalMon} Monitores, ${totalTec} Teclados`;
 
-                // Inicializar filtros en cascada
                 inicializarFiltrosCascada();
                 filtrarDatos();
 
             } catch (error) {
-                console.error("Error:", error);
-                document.getElementById('syncText').innerText = "Error de conexión o CORS al consultar Google Sheets.";
+                console.error("Error de sincronización:", error);
+                syncBanner.classList.add('error');
+                syncIcon.className = 'fa-solid fa-triangle-exclamation';
+                syncText.innerText = `Error: ${error.message}`;
+
+                document.getElementById('badgeTotal').innerText = "0 EQUIPOS";
+                document.getElementById('tablaCuerpo').innerHTML =
+                    `<tr><td colspan="10" style="text-align:center; color: var(--primary); padding: 20px;">
+                        ⚠️ No se pudieron cargar los datos. Verifica la URL del Web App y su publicación.
+                    </td></tr>`;
             }
         }
 
         /* ============================================================
            FILTROS EN CASCADA
-           - Sede → filtra Gerencias
-           - Gerencia → filtra Áreas
-           - Área → filtra Sub Áreas
            ============================================================ */
         function inicializarFiltrosCascada() {
-            // Llenar Sede con todos los valores únicos
             const sedes = obtenerUnicos(dbGlobal.cpu, 'SEDE');
             llenarSelect('filtroSede', sedes);
-
-            // Limpiar los demás
             llenarSelect('filtroGerencia', []);
             llenarSelect('filtroArea', []);
             llenarSelect('filtroSubArea', []);
@@ -743,19 +795,13 @@
 
         function onFiltroSedeChange() {
             const sede = document.getElementById('filtroSede').value;
-
-            // Filtrar datos por sede para armar gerencias
             const base = sede
-                ? dbGlobal.cpu.filter(c => String(c.SEDE) === sede)
+                ? dbGlobal.cpu.filter(c => String(c.SEDE || "").trim() === sede)
                 : dbGlobal.cpu;
 
-            const gerencias = obtenerUnicos(base, 'GERENCIA');
-            llenarSelect('filtroGerencia', gerencias);
-
-            // Resetear niveles inferiores
+            llenarSelect('filtroGerencia', obtenerUnicos(base, 'GERENCIA'));
             llenarSelect('filtroArea', []);
             llenarSelect('filtroSubArea', []);
-
             filtrarDatos();
         }
 
@@ -764,17 +810,13 @@
             const gerencia = document.getElementById('filtroGerencia').value;
 
             const base = dbGlobal.cpu.filter(c => {
-                if (sede && String(c.SEDE) !== sede) return false;
-                if (gerencia && String(c.GERENCIA) !== gerencia) return false;
+                if (sede && String(c.SEDE || "").trim() !== sede) return false;
+                if (gerencia && String(c.GERENCIA || "").trim() !== gerencia) return false;
                 return true;
             });
 
-            const areas = obtenerUnicos(base, 'AREA');
-            llenarSelect('filtroArea', areas);
-
-            // Resetear nivel inferior
+            llenarSelect('filtroArea', obtenerUnicos(base, 'AREA'));
             llenarSelect('filtroSubArea', []);
-
             filtrarDatos();
         }
 
@@ -784,23 +826,21 @@
             const area = document.getElementById('filtroArea').value;
 
             const base = dbGlobal.cpu.filter(c => {
-                if (sede && String(c.SEDE) !== sede) return false;
-                if (gerencia && String(c.GERENCIA) !== gerencia) return false;
-                if (area && String(c.AREA) !== area) return false;
+                if (sede && String(c.SEDE || "").trim() !== sede) return false;
+                if (gerencia && String(c.GERENCIA || "").trim() !== gerencia) return false;
+                if (area && String(c.AREA || "").trim() !== area) return false;
                 return true;
             });
 
-            const subareas = obtenerUnicos(base, 'SUBAREA');
-            llenarSelect('filtroSubArea', subareas);
-
+            llenarSelect('filtroSubArea', obtenerUnicos(base, 'SUBAREA'));
             filtrarDatos();
         }
 
         /* ============================================================
-           FUNCIONES AUXILIARES DE FILTRADO
+           FUNCIONES AUXILIARES
            ============================================================ */
         function obtenerUnicos(arr, campo) {
-            if (!arr) return [];
+            if (!arr || !Array.isArray(arr)) return [];
             const set = new Set();
             arr.forEach(item => {
                 const val = item[campo];
@@ -814,8 +854,6 @@
         function llenarSelect(elementId, valores) {
             const select = document.getElementById(elementId);
             const valorActual = select.value;
-
-            // Mantener la primera opción "TODOS"
             const primeraOpcion = select.options[0];
             select.innerHTML = "";
             select.appendChild(primeraOpcion);
@@ -827,16 +865,11 @@
                 select.appendChild(opt);
             });
 
-            // Restaurar valor si aún existe
-            if (valores.includes(valorActual)) {
-                select.value = valorActual;
-            } else {
-                select.value = "";
-            }
+            select.value = valores.includes(valorActual) ? valorActual : "";
         }
 
         /* ============================================================
-           FILTRADO PRINCIPAL (usa los 4 filtros en conjunto)
+           FILTRADO PRINCIPAL
            ============================================================ */
         function filtrarDatos() {
             const sede     = document.getElementById('filtroSede').value;
@@ -866,7 +899,7 @@
             tbody.innerHTML = "";
 
             if (datosFiltrados.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: var(--text-muted);">No se encontraron registros.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: var(--text-muted); padding: 15px;">No se encontraron registros con los filtros aplicados.</td></tr>`;
                 document.getElementById('btnAsignaciones').innerText = `0 Asignaciones`;
                 return;
             }
@@ -875,9 +908,11 @@
 
             datosFiltrados.forEach((cpu, index) => {
                 const responsable = cpu["USUARIO RESPONSABLE"] || "-";
+
                 const monitor = (dbGlobal.monitores || []).find(m =>
                     String(m["USUARIO RESPONSABLE"] || "").trim() === String(responsable).trim()
                 ) || {};
+
                 const teclado = (dbGlobal.teclados || []).find(t =>
                     String(t["USUARIO RESPONSABLE"] || "").trim() === String(responsable).trim()
                 ) || {};
@@ -928,8 +963,6 @@
             document.getElementById('filtroGerencia').value = "";
             document.getElementById('filtroArea').value = "";
             document.getElementById('filtroSubArea').value = "";
-
-            // Reinicializar cascada
             inicializarFiltrosCascada();
             filtrarDatos();
         }
@@ -947,7 +980,6 @@
             alert("Formulario habilitado para registrar nuevo mantenimiento de equipo.");
         }
 
-        // Botón "LIMPIAR" (antes "RESTAURAR")
         function limpiarTodo() {
             limpiarFiltros();
         }

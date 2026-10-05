@@ -226,6 +226,9 @@
             justify-content: space-between;
         }
 
+        /* ============================================================
+           LOGO: 1.5 cm arriba del espacio en blanco (impresión)
+           ============================================================ */
         .logo-container {
             display: flex;
             justify-content: flex-start;
@@ -270,9 +273,7 @@
             gap: 8px 20px;
         }
 
-        .ficha-form .full-width {
-            grid-column: 1 / -1;
-        }
+        .ficha-form .full-width { grid-column: 1 / -1; }
 
         .ficha-row {
             display: flex;
@@ -315,9 +316,7 @@
             font-weight: 500;
         }
 
-        .textarea-group {
-            margin-top: 8px;
-        }
+        .textarea-group { margin-top: 8px; }
 
         .textarea-group > label {
             display: block;
@@ -342,7 +341,7 @@
         }
 
         /* ============================================================
-           TABLA ANEXO (HORIZONTAL EN PANTALLA)
+           TABLA ANEXO (HORIZONTAL EN PANTALLA Y EN A4)
            ============================================================ */
         .table-responsive {
             overflow-x: auto;
@@ -391,9 +390,6 @@
             align-items: center;
             justify-content: center;
         }
-
-        /* Vista vertical (solo impresión) - oculta en pantalla */
-        .anexo-vertical { display: none; }
 
         /* Firmas */
         .signatures-section {
@@ -467,9 +463,10 @@
                 border-radius: 0 !important;
             }
 
+            /* Logo: 1.5 cm arriba del espacio en blanco */
             .logo-container {
                 display: flex !important;
-                margin-top: 2cm !important;
+                margin-top: 1.5cm !important;
                 margin-bottom: 1cm !important;
                 padding-bottom: 10px !important;
                 border-bottom: 1px solid #cbd5e1 !important;
@@ -486,13 +483,14 @@
                 padding-bottom: 8px !important;
             }
 
-            .form-row label, .ficha-row label { color: #374151 !important; }
+            .ficha-row label { color: #374151 !important; }
             .editable-input, textarea, .signature-input {
                 border: 1px solid #cbd5e1 !important;
                 background: #f8fafc !important;
                 color: #0f172a !important;
             }
 
+            /* Firmas: 2 cm arriba del espacio en blanco */
             .signatures-section {
                 border-top: 1px solid #9ca3af !important;
                 margin-top: 2cm !important;
@@ -504,53 +502,44 @@
                 break-after: auto !important;
             }
 
-            /* ====== ANEXO VERTICAL EN IMPRESIÓN ====== */
-            .table-responsive { display: none !important; }
-            .anexo-vertical { display: block !important; }
-
-            .anexo-item {
-                border: 1px solid #cbd5e1;
-                border-radius: 6px;
-                padding: 10px 14px;
-                margin-bottom: 12px;
-                page-break-inside: avoid;
-                background: #f8fafc;
+            /* ====== TABLA ANEXO: SE MANTIENE COMO TABLA EN A4 ====== */
+            .table-responsive {
+                display: block !important;
+                overflow: visible !important;
+                max-height: none !important;
+                border: 1px solid #cbd5e1 !important;
+                border-radius: 4px !important;
             }
 
-            .anexo-item-header {
-                background: #dc2626;
-                color: white;
-                padding: 6px 10px;
-                border-radius: 4px;
-                font-weight: 700;
-                font-size: 0.82rem;
-                margin-bottom: 8px;
-                display: flex;
-                justify-content: space-between;
+            table {
+                width: 100% !important;
+                font-size: 0.62rem !important;
+                table-layout: fixed;
             }
 
-            .anexo-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 6px 18px;
+            th {
+                background: #e2e8f0 !important;
+                color: #0f172a !important;
+                border-bottom: 2px solid #64748b !important;
+                padding: 6px 4px !important;
+                font-size: 0.6rem !important;
+                white-space: normal !important;
+                word-break: break-word;
             }
 
-            .anexo-row {
-                display: flex;
-                font-size: 0.78rem;
-                padding: 3px 0;
-                border-bottom: 1px dotted #cbd5e1;
+            td {
+                color: #1e293b !important;
+                border-bottom: 1px solid #e2e8f0 !important;
+                padding: 5px 4px !important;
+                font-size: 0.62rem !important;
+                white-space: normal !important;
+                word-break: break-word;
             }
 
-            .anexo-row .lbl {
-                width: 45%;
-                font-weight: 600;
-                color: #374151;
-            }
-            .anexo-row .val {
-                flex: 1;
-                color: #0f172a;
-                font-weight: 500;
+            /* Ocultar el botón ACC en la impresión */
+            table th:last-child,
+            table td:last-child {
+                display: none !important;
             }
         }
     </style>
@@ -575,6 +564,7 @@
         <button class="btn-sync" onclick="cargarDatos()"><i class="fa-solid fa-rotate"></i> Sincronizar</button>
     </div>
 
+    <!-- FILTROS: Sede, Gerencia, Área, Sub Área - siguen funcionando aunque no se muestren en el ANEXO -->
     <div class="filters-grid">
         <div class="filter-group"><label>1. Sede:</label><select id="filtroSede" onchange="onFiltroSedeChange()"><option value="">TODAS LAS SEDES</option></select></div>
         <div class="filter-group"><label>2. Gerencia:</label><select id="filtroGerencia" onchange="onFiltroGerenciaChange()"><option value="">TODAS LAS GERENCIAS</option></select></div>
@@ -613,7 +603,6 @@
                     <p>OFICINA GENERAL DE ADMINISTRACIÓN - OFICINA GENERAL DE TECNOLOGÍAS DE LA INFORMACIÓN</p>
                 </div>
 
-                <!-- Ficha compacta en 2 columnas -->
                 <div class="ficha-form">
                     <div class="ficha-row"><label>Sede Institucional:</label><div class="value"><input type="text" id="inputSede" class="editable-input" value="-"></div></div>
                     <div class="ficha-row"><label>Gerencia / Dirección:</label><div class="value"><input type="text" id="inputGerencia" class="editable-input" value="-"></div></div>
@@ -659,7 +648,7 @@
             </div>
         </div>
 
-        <!-- ==================== ANEXO ==================== -->
+        <!-- ==================== ANEXO (SIN SEDE, GERENCIA, ÁREA, SUB ÁREA) ==================== -->
         <div class="card">
             <div>
                 <div class="logo-container">
@@ -672,18 +661,14 @@
                     <p>Consolidado general de CPU, Monitores y Teclados por Usuario</p>
                 </div>
 
-                <!-- Tabla horizontal (pantalla) -->
-                <div class="table-responsive" id="tablaWrapper">
+                <!-- Tabla: mismas columnas en pantalla y en A4 -->
+                <div class="table-responsive">
                     <table>
                         <thead>
                             <tr>
                                 <th>Nº</th>
                                 <th>USUARIO RESPONSABLE</th>
                                 <th>MODALIDAD</th>
-                                <th>SEDE</th>
-                                <th>GERENCIA</th>
-                                <th>ÁREA</th>
-                                <th>SUB ÁREA</th>
                                 <th>MARCA</th>
                                 <th>SBN CPU</th>
                                 <th>SBN MONITOR</th>
@@ -693,13 +678,10 @@
                             </tr>
                         </thead>
                         <tbody id="tablaCuerpo">
-                            <tr><td colspan="13" style="text-align: center; color: var(--text-muted); padding: 15px;">Cargando registros...</td></tr>
+                            <tr><td colspan="9" style="text-align: center; color: var(--text-muted); padding: 15px;">Cargando registros...</td></tr>
                         </tbody>
                     </table>
                 </div>
-
-                <!-- Vista vertical (solo impresión) -->
-                <div class="anexo-vertical" id="anexoVertical"></div>
             </div>
 
             <div class="signatures-section">
@@ -719,11 +701,7 @@
     </div>
 
     <script>
-        /* ============================================================
-           URL DEL WEB APP
-           ⚠️ Reemplaza por la URL de TU implementación
-           ============================================================ */
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxICtJMaREBnZ11RU47JqJlRDj7j4NIkFiPGHqtLpUnnSZbpTzevp-3jOuZGkRAUZ0C/exec";
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYWgwggjL3_CsGiD9giQjiCciMSLgWjLvJ-uIg5WgAv4X0gi7wm61jhWNXCL2sB3Yr/exec";
 
         let dbGlobal = { cpu: [], monitores: [], teclados: [] };
         let datosFiltrados = [];
@@ -740,9 +718,6 @@
             }
         }
 
-        /* ============================================================
-           CARGA DE DATOS CON DIAGNÓSTICO VISIBLE
-           ============================================================ */
         async function cargarDatos() {
             const syncBanner = document.getElementById('syncBanner');
             const syncText = document.getElementById('syncText');
@@ -753,22 +728,17 @@
             syncText.innerText = "Cargando datos desde Google Sheets...";
 
             try {
-                const url = APPS_SCRIPT_URL + "?t=" + Date.now(); // evita caché
+                const url = APPS_SCRIPT_URL + "?t=" + Date.now();
                 const response = await fetch(url, {
                     method: 'GET',
                     redirect: 'follow',
                     cache: 'no-cache'
                 });
 
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status} - ${response.statusText}`);
-                }
+                if (!response.ok) throw new Error(`HTTP ${response.status} - ${response.statusText}`);
 
                 const texto = await response.text();
-
-                if (!texto || texto.trim() === "") {
-                    throw new Error("Respuesta vacía del servidor");
-                }
+                if (!texto || texto.trim() === "") throw new Error("Respuesta vacía del servidor");
 
                 let data;
                 try {
@@ -778,9 +748,7 @@
                     throw new Error("La respuesta no es JSON válido. Revisa la implementación del Apps Script.");
                 }
 
-                if (data.error) {
-                    throw new Error(data.mensaje || "Error reportado por el servidor");
-                }
+                if (data.error) throw new Error(data.mensaje || "Error reportado por el servidor");
 
                 dbGlobal = {
                     cpu:       Array.isArray(data.cpu)       ? data.cpu       : [],
@@ -795,7 +763,6 @@
                 document.getElementById('badgeTotal').innerText = `${totalCPU + totalMon + totalTec} EQUIPOS TOTALES`;
 
                 if (totalCPU === 0 && totalMon === 0 && totalTec === 0) {
-                    // Conexión OK pero sin datos
                     syncBanner.classList.add('warning');
                     syncIcon.className = 'fa-solid fa-triangle-exclamation';
                     syncText.innerText = "⚠️ Conexión OK, pero 0 registros. Verifica nombres de hojas y encabezados en tu Sheet.";
@@ -815,7 +782,7 @@
 
                 document.getElementById('badgeTotal').innerText = "0 EQUIPOS";
                 document.getElementById('tablaCuerpo').innerHTML =
-                    `<tr><td colspan="13" style="text-align:center; color: var(--primary); padding: 20px;">
+                    `<tr><td colspan="9" style="text-align:center; color: var(--primary); padding: 20px;">
                         ⚠️ No se pudieron cargar los datos. Abre la consola F12 para más detalle.
                     </td></tr>`;
             }
@@ -901,7 +868,8 @@
         }
 
         /* ============================================================
-           FILTRADO PRINCIPAL
+           FILTRADO: Sede, Gerencia, Área y Sub Área
+           (se aplican aunque NO se muestren en el ANEXO)
            ============================================================ */
         function filtrarDatos() {
             const sede     = document.getElementById('filtroSede').value;
@@ -924,17 +892,14 @@
         }
 
         /* ============================================================
-           RENDERIZADO: TABLA (PANTALLA) + BLOQUES (IMPRESIÓN)
+           RENDERIZADO: SOLO TABLA (SIN SEDE, GERENCIA, ÁREA, SUB ÁREA)
            ============================================================ */
         function renderizarTabla() {
             const tbody = document.getElementById('tablaCuerpo');
-            const anexoVertical = document.getElementById('anexoVertical');
             tbody.innerHTML = "";
-            anexoVertical.innerHTML = "";
 
             if (datosFiltrados.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="13" style="text-align:center; color: var(--text-muted); padding: 15px;">No se encontraron registros.</td></tr>`;
-                anexoVertical.innerHTML = `<p style="text-align:center; color:#6b7280;">No se encontraron registros.</p>`;
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color: var(--text-muted); padding: 15px;">No se encontraron registros.</td></tr>`;
                 document.getElementById('btnAsignaciones').innerText = `0 Asignaciones`;
                 return;
             }
@@ -952,16 +917,11 @@
                     String(t["USUARIO RESPONSABLE"] || "").trim() === String(responsable).trim()
                 ) || {};
 
-                // --- Fila tabla (pantalla) ---
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${index + 1}</td>
                     <td style="font-weight: 600;">${responsable}</td>
                     <td><span style="background: rgba(220,38,38,0.15); color: var(--primary); padding: 2px 6px; border-radius: 4px; font-weight: 600;">${cpu.MODALIDAD || 'CAS'}</span></td>
-                    <td>${cpu.SEDE || '-'}</td>
-                    <td>${cpu.GERENCIA || '-'}</td>
-                    <td>${cpu.AREA || '-'}</td>
-                    <td>${cpu.SUBAREA || '-'}</td>
                     <td>${cpu.MARCA || '-'}</td>
                     <td style="font-weight: 600; color: var(--accent-blue);">${cpu.SBN_CONCILIADO || '-'}</td>
                     <td>${monitor.SBN_CONCILIADO || '-'}</td>
@@ -970,31 +930,6 @@
                     <td><button class="action-icon" title="Ver detalles" onclick="seleccionarFila(${index})"><i class="fa-solid fa-desktop"></i></button></td>
                 `;
                 tbody.appendChild(tr);
-
-                // --- Bloque vertical (impresión) ---
-                const bloque = document.createElement('div');
-                bloque.className = 'anexo-item';
-                bloque.innerHTML = `
-                    <div class="anexo-item-header">
-                        <span>Nº ${index + 1} — ${responsable}</span>
-                        <span>${cpu.MODALIDAD || 'CAS'}</span>
-                    </div>
-                    <div class="anexo-grid">
-                        <div class="anexo-row"><span class="lbl">Sede:</span><span class="val">${cpu.SEDE || '-'}</span></div>
-                        <div class="anexo-row"><span class="lbl">Gerencia:</span><span class="val">${cpu.GERENCIA || '-'}</span></div>
-                        <div class="anexo-row"><span class="lbl">Área:</span><span class="val">${cpu.AREA || '-'}</span></div>
-                        <div class="anexo-row"><span class="lbl">Sub Área:</span><span class="val">${cpu.SUBAREA || '-'}</span></div>
-                        <div class="anexo-row"><span class="lbl">Marca CPU:</span><span class="val">${cpu.MARCA || '-'}</span></div>
-                        <div class="anexo-row"><span class="lbl">SBN CPU:</span><span class="val">${cpu.SBN_CONCILIADO || '-'}</span></div>
-                        <div class="anexo-row"><span class="lbl">Serie CPU:</span><span class="val">${cpu.SERIE || '-'}</span></div>
-                        <div class="anexo-row"><span class="lbl">SBN Monitor:</span><span class="val">${monitor.SBN_CONCILIADO || '-'}</span></div>
-                        <div class="anexo-row"><span class="lbl">Marca Monitor:</span><span class="val">${monitor.MARCA || '-'}</span></div>
-                        <div class="anexo-row"><span class="lbl">Serie Monitor:</span><span class="val">${monitor.SERIE || '-'}</span></div>
-                        <div class="anexo-row"><span class="lbl">SBN Teclado:</span><span class="val">${teclado.SBN_CONCILIADO || '-'}</span></div>
-                        <div class="anexo-row"><span class="lbl">Marca Teclado:</span><span class="val">${teclado.MARCA || '-'}</span></div>
-                    </div>
-                `;
-                anexoVertical.appendChild(bloque);
             });
         }
 

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGET // Mantenimiento Integral de Hardware - MIDIS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-main: #f3f4f6; --bg-card: #ffffff; --bg-card-header: #f9fafb;
+            --text-main: #111827; --text-muted: #6b7280; --border-color: #e5e7eb;
+            --primary: #dc2626; --title-color: #0284c7; --accent-green: #059669;
+            --accent-blue: #0284c7; --input-bg: #f9fafb; --table-header: #f3f4f6; --table-row-hover: #f9fafb;
+        }
+        [data-theme="dark"] {
+            --bg-main: #0b0f19; --bg-card: #111827; --bg-card-header: #1f2937;
+            --text-main: #f3f4f6; --text-muted: #9ca3af; --border-color: #374151;
+            --primary: #dc2626; --title-color: #38bdf8; --accent-green: #059669;
+            --accent-blue: #0284c7; --input-bg: #1f2937; --table-header: #1f2937; --table-row-hover: #1a2234;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; transition: background-color 0.3s ease, color 0.3s ease; }
+        body { background-color: var(--bg-main); color: var(--text-main); padding: 20px; min-height: 100vh; }
+        header { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 25px 35px; border-radius: 14px; border-left: 6px solid #0284c7; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .header-title h1 { color: var(--title-color); font-size: 1.35rem; font-weight: 700; }
+        .header-title p { font-size: 0.78rem; color: #94a3b8; text-transform: uppercase; margin-top: 4px; }
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .badge-total { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); color: #f8fafc; padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
+        .theme-toggle { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); color: #f8fafc; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .sync-banner { background: rgba(5, 150, 105, 0.1); border: 1px solid var(--accent-green); color: var(--accent-green); padding: 12px 20px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 0.9rem; }
+        .btn-sync { background: var(--accent-green); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .filters-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; background: var(--bg-card); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 20px; }
+        .filter-group label { display: block; font-size: 0.75rem; font-weight: 700; color: var(--title-color); margin-bottom: 6px; text-transform: uppercase; }
+        .filter-group select { width: 100%; padding: 10px 12px; background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 6px; outline: none; }
+        .toolbar { display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 15px 20px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 25px; flex-wrap: wrap; gap: 15px; }
+        .toolbar-left, .toolbar-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .btn { padding: 8px 16px; border-radius: 6px; border: none; font-size: 0.85rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-green { background: var(--accent-green); color: white; } .btn-blue { background: var(--accent-blue); color: white; }
+        .btn-orange { background: #d97706; color: white; } .btn-dark { background: #4b5563; color: white; } .btn-red { background: var(--primary); color: white; }
+        .workspace-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        @media (max-width: 1200px) { .workspace-grid { grid-template-columns: 1fr; } }
+        .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .card-header-title { text-align: center; border-bottom: 2px solid var(--primary); padding-bottom: 12px; margin-bottom: 20px; }
+        .card-header-title h3 { font-size: 0.95rem; color: var(--text-main); font-weight: 700; text-transform: uppercase; }
+        .card-header-title p { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
+        .form-row { display: flex; margin-bottom: 12px; align-items: center; font-size: 0.85rem; }
+        .form-row label { width: 35%; font-weight: 600; color: var(--text-muted); }
+        .form-row .value { width: 65%; color: var(--text-main); font-weight: 500; }
+        .editable-input { width: 100%; background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px 10px; border-radius: 4px; outline: none; }
+        .checkbox-group { display: flex; gap: 20px; align-items: center; }
+        .checkbox-group label { width: auto !important; display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text-main) !important; }
+        textarea { width: 100%; background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px; resize: vertical; font-size: 0.83rem; outline: none; }
+        .table-responsive { overflow-x: auto; max-height: 520px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.75rem; text-align: left; }
+        th { background: var(--table-header); color: var(--text-main); padding: 8px 6px; border-bottom: 1px solid var(--border-color); font-weight: 600; position: sticky; top: 0; z-index: 10; }
+        td { padding: 8px 6px; border-bottom: 1px solid var(--border-color); color: var(--text-main); }
+        tr:hover td { background: var(--table-row-hover); }
+        .action-icon { background: var(--primary); color: white; border: none; width: 24px; height: 24px; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+        @media print {
+            @page { size: A4 portrait; margin: 10mm; }
+            body { background: white !important; color: black !important; padding: 0 !important; }
+            header, .filters-grid, .toolbar, .theme-toggle, .sync-banner { display: none !important; }
+            .workspace-grid { display: block !important; }
+            .card { border: 1px solid #d1d5db !important; box-shadow: none !important; padding: 15px !important; background: white !important; color: black !important; page-break-after: always !important; height: 100vh; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-title">
+            <h1>SIGET // MANTENIMIENTO INTEGRAL DE HARDWARE</h1>
+            <p>MINISTERIO DE DESARROLLO E INCLUSIÓN SOCIAL - OGTI</p>
+        </div>
+        <div class="header-actions">
+            <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()" title="Cambiar Tema Oscuro/Claro">
+                <i class="fa-solid fa-moon" id="themeIcon"></i>
+            </button>
+            <div class="badge-total" id="badgeTotal">Cargando equipos...</div>
+        </div>
+    </header>
+
+    <div class="sync-banner" id="syncBanner">
+        <span><i class="fa-solid fa-circle-check"></i> <span id="syncText">Sincronizando con Google Sheets...</span></span>
+        <button class="btn-sync" onclick="cargarDatos()"><i class="fa-solid fa-rotate"></i> Sincronizar</button>
+    </div>
+
+    <div class="filters-grid">
+        <div class="filter-group"><label>1. Sede:</label><select id="filtroSede" onchange="filtrarDatos()"><option value="">TODAS LAS SEDES</option></select></div>
+        <div class="filter-group"><label>2. Gerencia:</label><select id="filtroGerencia" onchange="filtrarDatos()"><option value="">TODAS LAS GERENCIAS</option></select></div>
+        <div class="filter-group"><label>3. Área:</label><select id="filtroArea" onchange="filtrarDatos()"><option value="">TODAS LAS ÁREAS</option></select></div>
+        <div class="filter-group"><label>4. Sub Área:</label><select id="filtroSubArea" onchange="filtrarDatos()"><option value="">TODAS LAS SUB ÁREAS</option></select></div>
+    </div>
+
+    <div class="toolbar">
+        <div class="toolbar-left">
+            <button class="btn btn-green" onclick="agregarFila()"><i class="fa-solid fa-plus"></i> Agregar Fila</button>
+            <button class="btn btn-blue" onclick="ordenarAZ()"><i class="fa-solid fa-arrow-down-a-z"></i> Ordenar A-Z (Usuario)</button>
+            <button class="btn btn-orange" onclick="limpiarFiltros()"><i class="fa-solid fa-eraser"></i> Limpiar Filtros</button>
+            <button class="btn btn-dark" onclick="restaurarDatos()"><i class="fa-solid fa-rotate-left"></i> Restaurar</button>
+            <button class="btn btn-dark" id="btnAsignaciones">0 Asignaciones</button>
+        </div>
+        <div class="toolbar-right">
+            <button class="btn btn-red" onclick="window.print()"><i class="fa-solid fa-print"></i> Vista Previa / Imprimir Informe A4</button>
+        </div>
+    </div>
+
+    <div class="workspace-grid">
+        <div class="card">
+            <div class="card-header-title">
+                <h3>FICHA TÉCNICA DE MANTENIMIENTO DE EQUIPOS DE CÓMPUTO</h3>
+                <p>OFICINA GENERAL DE ADMINISTRACIÓN - OFICINA GENERAL DE TECNOLOGÍAS DE LA INFORMACIÓN</p>
+            </div>
+            <div class="form-row"><label>Sede Institucional:</label><div class="value"><input type="text" id="inputSede" class="editable-input" value="-"></div></div>
+            <div class="form-row"><label>Gerencia / Dirección:</label><div class="value"><input type="text" id="inputGerencia" class="editable-input" value="-"></div></div>
+            <div class="form-row"><label>Área Usuaria:</label><div class="value"><input type="text" id="inputArea" class="editable-input" value="-"></div></div>
+            <div class="form-row"><label>Sub Área:</label><div class="value"><input type="text" id="inputSubArea" class="editable-input" value="-"></div></div>
+            <div class="form-row"><label>Responsable Actual:</label><div class="value"><input type="text" id="inputResponsable" class="editable-input" value="-"></div></div>
+            <div class="form-row"><label>Fecha de Mantenimiento:</label><div class="value"><input type="text" id="inputFecha" class="editable-input" value="6 DE OCTUBRE DE 2026"></div></div>
+            <div class="form-row"><label>Tipo de Mantenimiento:</label><div class="value"><div class="checkbox-group"><label><input type="checkbox" id="chkPreventivo" checked> Preventivo</label><label><input type="checkbox" id="chkCorrectivo"> Correctivo</label></div></div></div>
+            <div style="margin-top: 12px;"><label style="font-size: 0.75rem; font-weight: 700; color: var(--title-color); text-transform: uppercase;">Actividades Realizadas:</label><textarea rows="6" id="txtActividades">• Mantenimiento de hardware (limpieza externa e interna de chasis, ventiladores y componentes).
+• Mantenimiento de componentes internos (memoria RAM, fuente, pasta térmica y coolers).
+• Mantenimiento de software (eliminación de temporales, optimización y actualización del SO).
+• Inventario y verificación física de CPU, Monitores y Teclados asociados.</textarea></div>
+            <div style="margin-top: 12px;"><label style="font-size: 0.75rem; font-weight: 700; color: var(--title-color); text-transform: uppercase;">Observaciones:</label><textarea rows="4" id="txtObservaciones">Se procedió con el mantenimiento preventivo programado según el cronograma institucional. Los equipos evaluados quedan totalmente operativos y conformes para sus funciones asignadas.</textarea></div>
+        </div>
+
+        <div class="card">
+            <div class="card-header-title">
+                <h3>ANEXO - MANTENIMIENTO INTEGRAL DE EQUIPOS</h3>
+                <p>Consolidado general de CPU, Monitores y Teclados por Usuario</p>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr><th>Nº</th><th>USUARIO RESPONSABLE</th><th>MODALIDAD</th><th>SEDE</th><th>MARCA</th><th>SBN CPU</th><th>SBN MONITOR</th><th>SBN TECLADO</th><th>SERIE CPU</th><th>ACC</th></tr>
+                    </thead>
+                    <tbody id="tablaCuerpo"><tr><td colspan="10" style="text-align: center; color: var(--text-muted);">Cargando registros...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT QUE TERMINA EN /exec
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYWgwggjL3_CsGiD9giQjiCciMSLgWjLvJ-uIg5WgAv4X0gi7wm61jhWNXCL2sB3Yr/exec";
+
+        let dbGlobal = { cpu: [], monitores: [], teclados: [] };
+        let datosFiltrados = [];
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('themeIcon');
+            if (html.getAttribute('data-theme') === 'light') {
+                html.setAttribute('data-theme', 'dark');
+                icon.className = 'fa-solid fa-sun';
+            } else {
+                html.setAttribute('data-theme', 'light');
+                icon.className = 'fa-solid fa-moon';
+            }
+        }
+
+        async function cargarDatos() {
+            document.getElementById('syncText').innerText = "Cargando datos desde Google Sheets...";
+            try {
+                const response = await fetch(APPS_SCRIPT_URL);
+                dbGlobal = await response.json();
+
+                let totalRegistros = (dbGlobal.cpu ? dbGlobal.cpu.length : 0) + 
+                                     (dbGlobal.monitores ? dbGlobal.monitores.length : 0) + 
+                                     (dbGlobal.teclados ? dbGlobal.teclados.length : 0);
+
+                document.getElementById('badgeTotal').innerText = `${totalRegistros} EQUIPOS TOTALES`;
+                document.getElementById('syncText').innerText = `Sincronización Exitosa: ${dbGlobal.cpu.length} CPUs, ${dbGlobal.monitores.length} Monitores, ${dbGlobal.teclados.length} Teclados`;
+                
+                poblarSelectoresFiltro();
+                filtrarDatos();
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById('syncText').innerText = "Error de conexión o CORS al consultar Google Sheets.";
+            }
+        }
+
+        function poblarSelectoresFiltro() {
+            let sedes = new Set(), gerencias = new Set(), areas = new Set(), subareas = new Set();
+            if (dbGlobal.cpu) {
+                dbGlobal.cpu.forEach(item => {
+                    if(item.SEDE) sedes.add(item.SEDE);
+                    if(item.GERENCIA) gerencias.add(item.GERENCIA);
+                    if(item.AREA) areas.add(item.AREA);
+                    if(item.SUBAREA) subareas.add(item.SUBAREA);
+                });
+            }
+            llenarSelect('filtroSede', sedes);
+            llenarSelect('filtroGerencia', gerencias);
+            llenarSelect('filtroArea', areas);
+            llenarSelect('filtroSubArea', subareas);
+        }
+
+        function llenarSelect(elementId, setValues) {
+            let select = document.getElementById(elementId);
+            let valorActual = select.value;
+            select.innerHTML = `<option value="">TODOS</option>`;
+            Array.from(setValues).sort().forEach(val => {
+                let opt = document.createElement('option');
+                opt.value = val;
+                opt.textContent = val;
+                select.appendChild(opt);
+            });
+            select.value = valorActual;
+        }
+
+        function filtrarDatos() {
+            let sede = document.getElementById('filtroSede').value;
+            let gerencia = document.getElementById('filtroGerencia').value;
+            let area = document.getElementById('filtroArea').value;
+            let subarea = document.getElementById('filtroSubArea').value;
+
+            let cpuList = dbGlobal.cpu || [];
+            datosFiltrados = cpuList.filter(cpu => {
+                if (sede && String(cpu.SEDE) !== sede) return false;
+                if (gerencia && String(cpu.GERENCIA) !== gerencia) return false;
+                if (area && String(cpu.AREA) !== area) return false;
+                if (subarea && String(cpu.SUBAREA) !== subarea) return false;
+                return true;
+            });
+
+            renderizarTabla();
+            actualizarFichaTecnica(datosFiltrados[0]);
+        }
+
+        function renderizarTabla() {
+            let tbody = document.getElementById('tablaCuerpo');
+            tbody.innerHTML = "";
+
+            if (datosFiltrados.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: var(--text-muted);">No se encontraron registros.</td></tr>`;
+                document.getElementById('btnAsignaciones').innerText = `0 Asignaciones`;
+                return;
+            }
+
+            document.getElementById('btnAsignaciones').innerText = `${datosFiltrados.length} Asignaciones`;
+
+            datosFiltrados.forEach((cpu, index) => {
+                let responsable = cpu["USUARIO RESPONSABLE"] || "-";
+                let monitor = (dbGlobal.monitores || []).find(m => String(m["USUARIO RESPONSABLE"]).trim() === String(responsable).trim()) || {};
+                let teclado = (dbGlobal.teclados || []).find(t => String(t["USUARIO RESPONSABLE"]).trim() === String(responsable).trim()) || {};
+
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td style="font-weight: 600;">${responsable}</td>
+                    <td><span style="background: rgba(220,38,38,0.15); color: var(--primary); padding: 2px 6px; border-radius: 4px; font-weight: 600;">${cpu.MODALIDAD || 'CAS'}</span></td>
+                    <td>${cpu.SEDE || '-'}</td>
+                    <td>${cpu.MARCA || '-'}</td>
+                    <td style="font-weight: 600; color: var(--accent-blue);">${cpu.SBN_CONCILIADO || '-'}</td>
+                    <td>${monitor.SBN_CONCILIADO || '-'}</td>
+                    <td>${teclado.SBN_CONCILIADO || '-'}</td>
+                    <td>${cpu.SERIE || '-'}</td>
+                    <td><button class="action-icon" title="Ver detalles" onclick="seleccionarFila(${index})"><i class="fa-solid fa-desktop"></i></button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function seleccionarFila(index) {
+            actualizarFichaTecnica(datosFiltrados[index]);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function actualizarFichaTecnica(cpu) {
+            if (!cpu) {
+                document.getElementById('inputSede').value = "-";
+                document.getElementById('inputGerencia').value = "-";
+                document.getElementById('inputArea').value = "-";
+                document.getElementById('inputSubArea').value = "-";
+                document.getElementById('inputResponsable').value = "-";
+                return;
+            }
+            document.getElementById('inputSede').value = cpu.SEDE || "-";
+            document.getElementById('inputGerencia').value = cpu.GERENCIA || "-";
+            document.getElementById('inputArea').value = cpu.AREA || "-";
+            document.getElementById('inputSubArea').value = cpu.SUBAREA || "-";
+            document.getElementById('inputResponsable').value = cpu["USUARIO RESPONSABLE"] || "-";
+        }
+
+        function limpiarFiltros() {
+            document.getElementById('filtroSede').value = "";
+            document.getElementById('filtroGerencia').value = "";
+            document.getElementById('filtroArea').value = "";
+            document.getElementById('filtroSubArea').value = "";
+            filtrarDatos();
+        }
+
+        function ordenarAZ() {
+            datosFiltrados.sort((a, b) => {
+                let u1 = (a["USUARIO RESPONSABLE"] || "").toUpperCase();
+                let u2 = (b["USUARIO RESPONSABLE"] || "").toUpperCase();
+                return u1.localeCompare(u2);
+            });
+            renderizarTabla();
+        }
+
+        function agregarFila() { alert("Formulario habilitado para registrar nuevo mantenimiento de equipo."); }
+        function restaurarDatos() { limpiarFiltros(); cargarDatos(); }
+
+        window.onload = cargarDatos;
+    </script>
+</body>
+</html>

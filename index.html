@@ -3,65 +3,474 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIGET // Mantenimiento Integral de Hardware - MIDIS</title>
+    <title>SIGET // MANTENIMIENTO INTEGRAL DE HARDWARE - MIDIS</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-main: #f3f4f6; --bg-card: #ffffff; --bg-card-header: #f9fafb;
-            --text-main: #111827; --text-muted: #6b7280; --border-color: #e5e7eb;
-            --primary: #dc2626; --title-color: #0284c7; --accent-green: #059669;
-            --accent-blue: #0284c7; --input-bg: #f9fafb; --table-header: #f3f4f6; --table-row-hover: #f9fafb;
+            --bg-main: #f3f4f6;
+            --bg-card: #ffffff;
+            --bg-card-header: #f9fafb;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --primary: #dc2626;
+            --title-color: #0284c7;
+            --header-bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            --accent-green: #059669;
+            --accent-blue: #0284c7;
+            --input-bg: #f9fafb;
+            --table-header: #f3f4f6;
+            --table-row-hover: #f9fafb;
         }
+
         [data-theme="dark"] {
-            --bg-main: #0b0f19; --bg-card: #111827; --bg-card-header: #1f2937;
-            --text-main: #f3f4f6; --text-muted: #9ca3af; --border-color: #374151;
-            --primary: #dc2626; --title-color: #38bdf8; --accent-green: #059669;
-            --accent-blue: #0284c7; --input-bg: #1f2937; --table-header: #1f2937; --table-row-hover: #1a2234;
+            --bg-main: #0b0f19;
+            --bg-card: #111827;
+            --bg-card-header: #1f2937;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border-color: #374151;
+            --primary: #dc2626;
+            --title-color: #38bdf8;
+            --header-bg-gradient: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            --accent-green: #059669;
+            --accent-blue: #0284c7;
+            --input-bg: #1f2937;
+            --table-header: #1f2937;
+            --table-row-hover: #1a2234;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; transition: background-color 0.3s ease, color 0.3s ease; }
-        body { background-color: var(--bg-main); color: var(--text-main); padding: 20px; min-height: 100vh; }
-        header { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 25px 35px; border-radius: 14px; border-left: 6px solid #0284c7; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
-        .header-title h1 { color: var(--title-color); font-size: 1.35rem; font-weight: 700; }
-        .header-title p { font-size: 0.78rem; color: #94a3b8; text-transform: uppercase; margin-top: 4px; }
-        .header-actions { display: flex; align-items: center; gap: 15px; }
-        .badge-total { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); color: #f8fafc; padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
-        .theme-toggle { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); color: #f8fafc; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .sync-banner { background: rgba(5, 150, 105, 0.1); border: 1px solid var(--accent-green); color: var(--accent-green); padding: 12px 20px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 0.9rem; }
-        .btn-sync { background: var(--accent-green); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-        .filters-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; background: var(--bg-card); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 20px; }
-        .filter-group label { display: block; font-size: 0.75rem; font-weight: 700; color: var(--title-color); margin-bottom: 6px; text-transform: uppercase; }
-        .filter-group select { width: 100%; padding: 10px 12px; background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 6px; outline: none; }
-        .toolbar { display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 15px 20px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 25px; flex-wrap: wrap; gap: 15px; }
-        .toolbar-left, .toolbar-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-        .btn { padding: 8px 16px; border-radius: 6px; border: none; font-size: 0.85rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
-        .btn-green { background: var(--accent-green); color: white; } .btn-blue { background: var(--accent-blue); color: white; }
-        .btn-orange { background: #d97706; color: white; } .btn-dark { background: #4b5563; color: white; } .btn-red { background: var(--primary); color: white; }
-        .workspace-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
-        @media (max-width: 1200px) { .workspace-grid { grid-template-columns: 1fr; } }
-        .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-        .card-header-title { text-align: center; border-bottom: 2px solid var(--primary); padding-bottom: 12px; margin-bottom: 20px; }
-        .card-header-title h3 { font-size: 0.95rem; color: var(--text-main); font-weight: 700; text-transform: uppercase; }
-        .card-header-title p { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
-        .form-row { display: flex; margin-bottom: 12px; align-items: center; font-size: 0.85rem; }
-        .form-row label { width: 35%; font-weight: 600; color: var(--text-muted); }
-        .form-row .value { width: 65%; color: var(--text-main); font-weight: 500; }
-        .editable-input { width: 100%; background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px 10px; border-radius: 4px; outline: none; }
-        .checkbox-group { display: flex; gap: 20px; align-items: center; }
-        .checkbox-group label { width: auto !important; display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text-main) !important; }
-        textarea { width: 100%; background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px; resize: vertical; font-size: 0.83rem; outline: none; }
-        .table-responsive { overflow-x: auto; max-height: 520px; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.75rem; text-align: left; }
-        th { background: var(--table-header); color: var(--text-main); padding: 8px 6px; border-bottom: 1px solid var(--border-color); font-weight: 600; position: sticky; top: 0; z-index: 10; }
-        td { padding: 8px 6px; border-bottom: 1px solid var(--border-color); color: var(--text-main); }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        header {
+            background: var(--header-bg-gradient);
+            padding: 25px 35px;
+            border-radius: 14px;
+            border-left: 6px solid var(--accent-blue);
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title h1 {
+            color: var(--title-color);
+            font-size: 1.35rem;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+        }
+
+        .header-title p {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .badge-total {
+            background: var(--bg-card-header);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .theme-toggle {
+            background: var(--bg-card-header);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .theme-toggle:hover { border-color: var(--title-color); }
+
+        .sync-banner {
+            background: rgba(5, 150, 105, 0.1);
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+            padding: 12px 20px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .btn-sync {
+            background: var(--accent-green);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-sync:hover { opacity: 0.9; }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .filter-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--title-color);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .filter-group select {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-card);
+            padding: 15px 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .toolbar-left, .toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-green { background: var(--accent-green); color: white; }
+        .btn-blue { background: var(--accent-blue); color: white; }
+        .btn-orange { background: #d97706; color: white; }
+        .btn-dark { background: #4b5563; color: white; }
+        .btn-red { background: var(--primary); color: white; }
+        .btn:hover { opacity: 0.9; }
+
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 1200px) {
+            .workspace-grid { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-header-title {
+            text-align: center;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+
+        .card-header-title h3 {
+            font-size: 0.95rem;
+            color: var(--text-main);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .card-header-title p {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .print-logo-container {
+            display: none;
+        }
+
+        .form-row {
+            display: flex;
+            margin-bottom: 12px;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+
+        .form-row label {
+            width: 35%;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .form-row .value {
+            width: 65%;
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        .editable-input {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        .editable-input:focus { border-color: var(--title-color); }
+
+        .checkbox-group {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .checkbox-group label {
+            width: auto !important;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            color: var(--text-main) !important;
+        }
+
+        textarea {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px;
+            border-radius: 6px;
+            resize: vertical;
+            font-size: 0.83rem;
+            line-height: 1.4;
+            outline: none;
+            margin-top: 6px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            max-height: 440px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+            text-align: left;
+        }
+
+        th {
+            background: var(--table-header);
+            color: var(--text-main);
+            padding: 8px 6px;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        td {
+            padding: 8px 6px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+            white-space: nowrap;
+        }
+
         tr:hover td { background: var(--table-row-hover); }
-        .action-icon { background: var(--primary); color: white; border: none; width: 24px; height: 24px; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+
+        .action-icon {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        .signatures-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px dashed var(--border-color);
+            text-align: center;
+        }
+
+        .signature-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .signature-line {
+            width: 80%;
+            border-top: 1px solid var(--text-main);
+            margin-bottom: 8px;
+            margin-top: 45px;
+        }
+
+        .signature-input {
+            width: 100%;
+            text-align: center;
+            background: transparent;
+            border: 1px dashed transparent;
+            color: var(--text-main);
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 3px;
+            outline: none;
+            border-radius: 4px;
+        }
+
+        .signature-input:hover, .signature-input:focus {
+            border-color: var(--border-color);
+            background: var(--input-bg);
+        }
+
         @media print {
-            @page { size: A4 portrait; margin: 10mm; }
-            body { background: white !important; color: black !important; padding: 0 !important; }
-            header, .filters-grid, .toolbar, .theme-toggle, .sync-banner { display: none !important; }
-            .workspace-grid { display: block !important; }
-            .card { border: 1px solid #d1d5db !important; box-shadow: none !important; padding: 15px !important; background: white !important; color: black !important; page-break-after: always !important; height: 100vh; }
+            @page {
+                size: A4 portrait;
+                margin: 10mm;
+            }
+            body {
+                background: white !important;
+                color: black !important;
+                padding: 0 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            header, .filters-grid, .toolbar, .theme-toggle, .sync-banner {
+                display: none !important;
+            }
+            .workspace-grid {
+                display: block !important;
+            }
+            .card {
+                border: 1px solid #d1d5db !important;
+                box-shadow: none !important;
+                padding: 15px !important;
+                background: white !important;
+                color: black !important;
+                page-break-after: always !important;
+                break-after: page !important;
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+            }
+            .print-logo-container {
+                display: block !important;
+                text-align: left;
+                margin-bottom: 2cm; /* Exactamente 2cm de separación debajo del logo */
+            }
+            .print-logo-container img {
+                height: 48px;
+                object-fit: contain;
+            }
+            .card-header-title h3 {
+                color: #111827 !important;
+                font-size: 0.95rem !important;
+            }
+            .card-header-title {
+                border-bottom: 2px solid #dc2626 !important;
+                margin-bottom: 15px !important;
+                padding-bottom: 8px !important;
+            }
+            .form-row label { color: #374151 !important; }
+            .editable-input, textarea, .signature-input {
+                border: 1px solid #cbd5e1 !important;
+                background: #f8fafc !important;
+                color: #0f172a !important;
+            }
+            th { background: #e2e8f0 !important; color: #0f172a !important; border-bottom: 2px solid #64748b !important; }
+            td { color: #1e293b !important; border-bottom: 1px solid #e2e8f0 !important; }
+            .signatures-section {
+                border-top: 1px solid #9ca3af !important;
+            }
+            @page { margin-bottom: 0; margin-top: 0; }
         }
     </style>
 </head>
@@ -85,6 +494,7 @@
         <button class="btn-sync" onclick="cargarDatos()"><i class="fa-solid fa-rotate"></i> Sincronizar</button>
     </div>
 
+    <!-- Filtros jerárquicos -->
     <div class="filters-grid">
         <div class="filter-group"><label>1. Sede:</label><select id="filtroSede" onchange="filtrarDatos()"><option value="">TODAS LAS SEDES</option></select></div>
         <div class="filter-group"><label>2. Gerencia:</label><select id="filtroGerencia" onchange="filtrarDatos()"><option value="">TODAS LAS GERENCIAS</option></select></div>
@@ -92,6 +502,7 @@
         <div class="filter-group"><label>4. Sub Área:</label><select id="filtroSubArea" onchange="filtrarDatos()"><option value="">TODAS LAS SUB ÁREAS</option></select></div>
     </div>
 
+    <!-- Barra de Herramientas -->
     <div class="toolbar">
         <div class="toolbar-left">
             <button class="btn btn-green" onclick="agregarFila()"><i class="fa-solid fa-plus"></i> Agregar Fila</button>
@@ -105,48 +516,126 @@
         </div>
     </div>
 
+    <!-- Contenedor Principal -->
     <div class="workspace-grid">
+        
+        <!-- Ficha Técnica -->
         <div class="card">
-            <div class="card-header-title">
-                <h3>FICHA TÉCNICA DE MANTENIMIENTO DE EQUIPOS DE CÓMPUTO</h3>
-                <p>OFICINA GENERAL DE ADMINISTRACIÓN - OFICINA GENERAL DE TECNOLOGÍAS DE LA INFORMACIÓN</p>
-            </div>
-            <div class="form-row"><label>Sede Institucional:</label><div class="value"><input type="text" id="inputSede" class="editable-input" value="-"></div></div>
-            <div class="form-row"><label>Gerencia / Dirección:</label><div class="value"><input type="text" id="inputGerencia" class="editable-input" value="-"></div></div>
-            <div class="form-row"><label>Área Usuaria:</label><div class="value"><input type="text" id="inputArea" class="editable-input" value="-"></div></div>
-            <div class="form-row"><label>Sub Área:</label><div class="value"><input type="text" id="inputSubArea" class="editable-input" value="-"></div></div>
-            <div class="form-row"><label>Responsable Actual:</label><div class="value"><input type="text" id="inputResponsable" class="editable-input" value="-"></div></div>
-            <div class="form-row"><label>Fecha de Mantenimiento:</label><div class="value"><input type="text" id="inputFecha" class="editable-input" value="6 DE OCTUBRE DE 2026"></div></div>
-            <div class="form-row"><label>Tipo de Mantenimiento:</label><div class="value"><div class="checkbox-group"><label><input type="checkbox" id="chkPreventivo" checked> Preventivo</label><label><input type="checkbox" id="chkCorrectivo"> Correctivo</label></div></div></div>
-            <div style="margin-top: 12px;"><label style="font-size: 0.75rem; font-weight: 700; color: var(--title-color); text-transform: uppercase;">Actividades Realizadas:</label><textarea rows="6" id="txtActividades">• Mantenimiento de hardware (limpieza externa e interna de chasis, ventiladores y componentes).
+            <div>
+                <!-- LOGO INSTITUCIONAL EMBEBIDO CON 2CM DE SEPARACIÓN EN A4 -->
+                <div class="print-logo-container">
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" alt="Logo MIDIS" id="midisLogo">
+                </div>
+                <div class="card-header-title">
+                    <h3>FICHA TÉCNICA DE MANTENIMIENTO DE EQUIPOS DE CÓMPUTO</h3>
+                    <p>OFICINA GENERAL DE ADMINISTRACIÓN - OFICINA GENERAL DE TECNOLOGÍAS DE LA INFORMACIÓN</p>
+                </div>
+                
+                <div class="form-row"><label>Sede Institucional:</label><div class="value"><input type="text" id="inputSede" class="editable-input" value="-"></div></div>
+                <div class="form-row"><label>Gerencia / Dirección:</label><div class="value"><input type="text" id="inputGerencia" class="editable-input" value="-"></div></div>
+                <div class="form-row"><label>Área Usuaria:</label><div class="value"><input type="text" id="inputArea" class="editable-input" value="-"></div></div>
+                <div class="form-row"><label>Sub Área:</label><div class="value"><input type="text" id="inputSubArea" class="editable-input" value="-"></div></div>
+                <div class="form-row"><label>Responsable Actual:</label><div class="value"><input type="text" id="inputResponsable" class="editable-input" value="-"></div></div>
+                <div class="form-row"><label>Fecha de Mantenimiento:</label><div class="value"><input type="text" id="inputFecha" class="editable-input" value="6 DE OCTUBRE DE 2026"></div></div>
+                <div class="form-row"><label>Tipo de Mantenimiento:</label><div class="value"><div class="checkbox-group"><label><input type="checkbox" id="chkPreventivo" checked> Preventivo</label><label><input type="checkbox" id="chkCorrectivo"> Correctivo</label></div></div></div>
+                
+                <div style="margin-top: 10px;"><label style="font-size: 0.75rem; font-weight: 700; color: var(--title-color); text-transform: uppercase;">Actividades Realizadas:</label><textarea rows="4" id="txtActividades">• Mantenimiento de hardware (limpieza externa e interna de chasis, ventiladores y componentes).
 • Mantenimiento de componentes internos (memoria RAM, fuente, pasta térmica y coolers).
 • Mantenimiento de software (eliminación de temporales, optimización y actualización del SO).
 • Inventario y verificación física de CPU, Monitores y Teclados asociados.</textarea></div>
-            <div style="margin-top: 12px;"><label style="font-size: 0.75rem; font-weight: 700; color: var(--title-color); text-transform: uppercase;">Observaciones:</label><textarea rows="4" id="txtObservaciones">Se procedió con el mantenimiento preventivo programado según el cronograma institucional. Los equipos evaluados quedan totalmente operativos y conformes para sus funciones asignadas.</textarea></div>
+
+                <div style="margin-top: 10px;"><label style="font-size: 0.75rem; font-weight: 700; color: var(--title-color); text-transform: uppercase;">Observaciones:</label><textarea rows="3" id="txtObservaciones">Se procedió con el mantenimiento preventivo programado según el cronograma institucional. Los equipos evaluados quedan totalmente operativos y conformes para sus funciones asignadas.</textarea></div>
+            </div>
+
+            <!-- APARTADO DE FIRMAS EDITABLES -->
+            <div class="signatures-section">
+                <div class="signature-box">
+                    <div class="signature-line"></div>
+                    <input type="text" class="signature-input" value="Téc. Mijael Rivera Lopez">
+                    <input type="text" class="signature-input" value="Personal Técnico - OGTI">
+                </div>
+                <div class="signature-box">
+                    <div class="signature-line"></div>
+                    <input type="text" class="signature-input" value="Responsable de Área Usuaria">
+                    <input type="text" class="signature-input" value="Jefatura / Responsable Institucional">
+                </div>
+            </div>
         </div>
 
+        <!-- Anexo / Tabla Consolidada -->
         <div class="card">
-            <div class="card-header-title">
-                <h3>ANEXO - MANTENIMIENTO INTEGRAL DE EQUIPOS</h3>
-                <p>Consolidado general de CPU, Monitores y Teclados por Usuario</p>
+            <div>
+                <!-- LOGO INSTITUCIONAL EMBEBIDO CON 2CM DE SEPARACIÓN EN A4 -->
+                <div class="print-logo-container">
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" alt="Logo MIDIS" class="midisLogoCopy">
+                </div>
+                <div class="card-header-title">
+                    <h3>ANEXO - MANTENIMIENTO INTEGRAL DE EQUIPOS</h3>
+                    <p>Consolidado general de CPU, Monitores y Teclados por Usuario</p>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nº</th>
+                                <th>USUARIO RESPONSABLE</th>
+                                <th>MODALIDAD</th>
+                                <th>SEDE</th>
+                                <th>MARCA</th>
+                                <th>SBN CPU</th>
+                                <th>SBN MONITOR</th>
+                                <th>SBN TECLADO</th>
+                                <th>SERIE CPU</th>
+                                <th>ACC</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaCuerpo">
+                            <tr><td colspan="10" style="text-align: center; color: var(--text-muted);">Cargando registros...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr><th>Nº</th><th>USUARIO RESPONSABLE</th><th>MODALIDAD</th><th>SEDE</th><th>MARCA</th><th>SBN CPU</th><th>SBN MONITOR</th><th>SBN TECLADO</th><th>SERIE CPU</th><th>ACC</th></tr>
-                    </thead>
-                    <tbody id="tablaCuerpo"><tr><td colspan="10" style="text-align: center; color: var(--text-muted);">Cargando registros...</td></tr></tbody>
-                </table>
+
+            <!-- APARTADO DE FIRMAS EDITABLES -->
+            <div class="signatures-section">
+                <div class="signature-box">
+                    <div class="signature-line"></div>
+                    <input type="text" class="signature-input" value="Téc. Mijael Rivera Lopez">
+                    <input type="text" class="signature-input" value="Personal Técnico - OGTI">
+                </div>
+                <div class="signature-box">
+                    <div class="signature-line"></div>
+                    <input type="text" class="signature-input" value="Responsable de Área Usuaria">
+                    <input type="text" class="signature-input" value="Jefatura / Responsable Institucional">
+                </div>
             </div>
         </div>
+
     </div>
 
     <script>
-        // PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT QUE TERMINA EN /exec
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYViUtz1XPnUbYnaWlY5pnpTnX8WAYK1P0rEJeHI1x2kZOYun4SxQiDXGxHElgLS6L/exec";
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYWgwggjL3_CsGiD9giQjiCciMSLgWjLvJ-uIg5WgAv4X0gi7wm61jhWNXCL2sB3Yr/exec";
 
         let dbGlobal = { cpu: [], monitores: [], teclados: [] };
         let datosFiltrados = [];
+
+        // Convertir automáticamente la imagen logo.png local a Base64 al cargar la página
+        window.addEventListener('DOMContentLoaded', () => {
+            const img = new Image();
+            img.crossOrigin = 'Anonymous';
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                const dataURL = canvas.toDataURL('image/png');
+                document.getElementById('midisLogo').src = dataURL;
+                document.querySelectorAll('.midisLogoCopy').forEach(el => el.src = dataURL);
+            };
+            img.src = 'logo.png';
+        });
 
         function toggleTheme() {
             const html = document.documentElement;
